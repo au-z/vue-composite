@@ -1,5 +1,6 @@
 <template>
 	<div id="app">
+		<div class="component-count">{{componentCount}}</div>
 		<h1>{{$options.name}}</h1>
 		<button @click="$compose('/lib/pl-profile.js')">Click To Load</button>
 		<pl-profile :prop="time"></pl-profile>
@@ -7,12 +8,18 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
 	name: 'app',
 	data() {
 		return {
 			time: 0,
 		};
+	},
+	computed: {
+		...mapState({
+			componentCount: (state) => state.componentCount,
+		}),
 	},
 	created() {
 		this.tick();
