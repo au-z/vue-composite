@@ -6,6 +6,12 @@
 				return (this.$route.name === menuItemRoute) ? 'active' : 'inactive';
 			},
 		},
+		created: function() {
+			let vm = this;
+			setInterval(function() {
+				vm.$store.commit('incCounter');
+			}, 1000);
+		},
 		template: `
 			<nav><ul>
 				<li class="menu-item"><a href="#">Profile</a></li>
