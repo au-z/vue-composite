@@ -7,14 +7,10 @@ import VueRouter from 'vue-router';
 import VueCustomElement from 'vue-custom-element';
 import VueComposite from '../lib/vue-composite/vueComposite';
 
-if(typeof Promise == 'undefined' && Promise.toString().indexOf('[native code]') == -1) {
-	throw new Error('Sorry, Promises are not supported by your browser. :(');
-}
-
 Vue.use(Vuex);
 Vue.use(VueCustomElement);
 Vue.use(VueComposite, {Vuex});
-Vue.registerApi({name: 'MyAccount', url: 'https://runkit.io/auzmartist/ma-mock/branches/master/'});
+Vue.registerApi({name: 'MyAccount', url: 'http://localhost:8081/api/'});
 Vue.config.ignoredElements = ['pl-profile', 'pl-profile-menu'];
 
 new Vue({
