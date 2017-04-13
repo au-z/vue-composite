@@ -1,8 +1,8 @@
 <template>
 	<div id="app">
 		<h1>{{$options.name}}</h1>
-		<button @click="$compose('/modules/pl-profile.js')">Click To Load</button>
-		<pl-profile :prop="time"></pl-profile>
+		{{time}}
+		<header><pl-profile :prop="time"></pl-profile></header>
 	</div>
 </template>
 
@@ -15,6 +15,7 @@ export default {
 		};
 	},
 	created() {
+		this.$compose('/api/composables/pl-profile.js');
 		this.tick();
 	},
 	methods: {
@@ -40,6 +41,15 @@ export default {
 	margin-top: 60px;
 }
 
+header {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	top: 0;
+	height: 42px;
+	background-color: #eee;
+}
+
 h1, h2 {
 	font-weight: normal;
 }
@@ -56,5 +66,15 @@ li {
 
 a {
 	color: #42b983;
+}
+
+.pl-profile {
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 0 8px;
+	h3 {
+		margin: 12px;
+	}
 }
 </style>

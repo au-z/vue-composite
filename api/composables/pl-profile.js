@@ -3,7 +3,7 @@
 		name: 'pl-profile',
 		props: ['prop'],
 		_compositeUrls: [
-			'/modules/pl-profile-menu.js',
+			'/api/composables/pl-profile-menu.js',
 		],
 		store: new Vuex.Store({
 			state: {
@@ -29,22 +29,19 @@
 			getProfile: function() {
 				let vm = this;
 				// TODO: How to we represent base urls before build?
-				fetch(this.$api['MyAccount'].url + 'account/profile', {
-					headers: {'X-Requested-With': 'XMLHttpRequest'},
-				}).then(function(r) {
-					var json = JSON.parse(r.headers.get('X-Responded-JSON'));
-					if (json && json.status === 401) {
-						window.location.href = json.headers['location'];
-					}
-					return r;
-				}).then(function(r) {return r.json()})
+				fetch(this.$api['MyAccount'].url + 'account/profile')
+				.then(function(r) {
+					console.log(r);
+					return r.json()})
 				.then(function(profile) {vm.name = profile.name});
 			},
 		},
 		template: `
-			<div v-cloak>
-				<p>Hello {{name}}!</p>
-				<p>prop data: {{prop}} <br> local vuex counter: {{counter}}</p>
+			<div class="pl-profile">
+				<div class="header"><h3>Hello {{name}}!</h3></div>
+				<div class="content">
+					<p>{{prop}} : {{counter}}</p>
+				</div>
 				<pl-profile-menu></pl-profile-menu>
 			</div>
 		`,

@@ -31,6 +31,7 @@
     "http": "0.0.0",
     "node-sass": "^4.5.0",
     "sass-loader": "^5.0.1",
+    "vue-loader": "^11.3.4",
     "vue-template-compiler": "^2.2.1",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^2.2.0"
