@@ -2,13 +2,13 @@
 	<div id="app">
 		<h1>{{$options.name}}</h1>
 		{{time}}
-		<header><pl-profile :prop="time"></pl-profile></header>
+		<header><pl-profile :prop="time" @emitEvent="addCounter(-1)"></pl-profile></header>
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'app',
+	name: 'Hello',
 	data() {
 		return {
 			time: 0,
@@ -22,8 +22,11 @@ export default {
 		tick() {
 			let vm = this;
 			setInterval(() => {
-				vm.time++;
+				this.addCounter(1);
 			}, 1000);
+		},
+		addCounter(val) {
+			this.time += val;
 		},
 	},
 };

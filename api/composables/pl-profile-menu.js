@@ -20,7 +20,7 @@
 			});
 			setInterval(function() {
 				vm.$store.commit('incCounter');
-			}, 1000);
+			}, 500);
 		},
 		methods: {
 			emitClickedLink: function() {

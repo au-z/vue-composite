@@ -9,6 +9,20 @@
 			state: {
 				counter: 0,
 			},
+			modules: {
+				api: {
+					state: {
+						url: 'http://localhost:8081/api/',
+					},
+					getters: {
+						apiUrl: function(state) {
+							return (function() {
+								return state.url;
+							})();
+						},
+					},
+				},
+			},
 			getters: {
 				counter: (state) => state.counter,
 			},
@@ -21,15 +35,14 @@
 				name: null,
 			};
 		},
-		computed: mapGetters([ 'counter' ]),
+		computed: mapGetters([ 'counter', 'apiUrl' ]),
 		created: function() {
 			this.getProfile();
 		},
 		methods: {
 			getProfile: function() {
 				let vm = this;
-				// TODO: How to we represent base urls before build?
-				fetch(this.$api['MyAccount'].url + 'account/profile')
+				fetch(this.apiUrl + 'account/profile')
 				.then(function(r) {
 					console.log(r);
 					return r.json()})
@@ -38,9 +51,11 @@
 		},
 		template: `
 			<div class="pl-profile">
-				<div class="header"><h3>Hello {{name}}!</h3></div>
+				<div class="header"><h3>Hi {{name}}!</h3></div>
 				<div class="content">
-					<p>{{prop}} : {{counter}}</p>
+					<button @click="$emit('emitEvent')">-1</button>
+					<p>prop: {{prop}} : vuex: {{counter}}</p>
+					<p>apiUrl: {{apiUrl}}</p>
 				</div>
 				<pl-profile-menu></pl-profile-menu>
 			</div>
