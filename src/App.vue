@@ -8,14 +8,14 @@
 
 <script>
 export default {
-	name: 'Hello',
+	name: 'app',
 	data() {
 		return {
 			time: 0,
 		};
 	},
 	created() {
-		this.$compose('/api/composables/pl-profile.js');
+		this.$compose(this.$api['MyAccount'].url + 'composables/pl-profile.js');
 		this.tick();
 	},
 	methods: {

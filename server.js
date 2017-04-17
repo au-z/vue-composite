@@ -1,15 +1,18 @@
-var path = require('path');
-var express = require('express');
-var app = express();
+/* eslint-env node*/
+/* eslint-disable no-console */
+'use strict';
+
+let path = require('path');
+let express = require('express');
+let app = express();
 app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	next();
 });
 
-app.use(express.static(path.join(__dirname, '/api')));
-
 app.set('port', 8081);
+app.use(express.static(path.join(__dirname, '/')));
 
 app.get('/api/account/profile', (req, res) => {
 	res.contentType('application/json');
