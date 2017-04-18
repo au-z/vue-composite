@@ -2,7 +2,18 @@
 	<div id="app">
 		<h1>{{$options.name}}</h1>
 		{{time}}
-		<header><pl-profile :prop="time" @emitEvent="addCounter(-1)"></pl-profile></header>
+		<header>
+			<pl-profile :prop="time" @emitEvent="addCounter(-1)"></pl-profile>
+		</header>
+		<div v-for="(v, i) in viewerCount">
+			<div class="control-panel">
+				<label for="yaw">Yaw</label><input type="number" :value="pvBind('yaw')"></input>
+				<label for="yaw">Pitch</label><input type="number" :value="pvBind('yaw')"></input>
+				<label for="yaw">Roll</label><input type="number" :value="pvBind('yaw')"></input>
+			</div>
+			<div class="proto-view" :data-src="$api['MyAccount'].url + 'pnpv/'" data-width="500" data-height="200"></div>
+		</div>
+
 	</div>
 </template>
 
@@ -12,11 +23,19 @@ export default {
 	data() {
 		return {
 			time: 0,
+			viewerCount: 3,
+			viewers: null,
 		};
 	},
 	created() {
 		this.$compose(this.$api['MyAccount'].url + 'composables/pl-profile.js');
 		this.tick();
+	},
+	mounted() {
+		this.viewers = ProtoView({
+			classSelector: 'proto-view',
+			origin: this.$api['MyAccount'].origin,
+		});
 	},
 	methods: {
 		tick() {
@@ -27,6 +46,9 @@ export default {
 		},
 		addCounter(val) {
 			this.time += val;
+		},
+		pnpvBind(messageKey) {
+			return '1';
 		},
 	},
 };
@@ -78,6 +100,12 @@ a {
 	padding: 0 8px;
 	h3 {
 		margin: 12px;
+	}
+}
+
+.control-panel {
+	input {
+		width: 50px;
 	}
 }
 </style>

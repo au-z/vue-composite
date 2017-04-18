@@ -1,5 +1,5 @@
 <template>
-	<nav class="pl-profile-menu">{{clickCounter}}<ul>
+	<nav class="pl-profile-menu"><ul>
 		<li class="menu-item" v-for="l in menuLinks"><a v-on:click="emitClickedLink()" :href="l.url">{{l.name}}</a></li>
 	</ul></nav>
 </template>
@@ -33,6 +33,9 @@
 </script>
 
 <style>
+	.pl-profile-menu {
+		border: 1px solid blue;
+	}
 	.pl-profile-menu ul {
 		list-style-type: none;
 	}

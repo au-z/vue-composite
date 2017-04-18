@@ -12,7 +12,7 @@ app.use(function(req, res, next) {
 });
 
 app.set('port', 8081);
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, 'api')));
 
 app.get('/api/account/profile', (req, res) => {
 	res.contentType('application/json');

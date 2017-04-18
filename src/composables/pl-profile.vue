@@ -21,7 +21,7 @@ export default {
 	name: 'pl-profile',
 	props: ['prop'],
 	_compositeUrls: [
-		'http://localhost:8081/api/composables/pl-profile-menu.js',
+		'http://localhost:8081/composables/pl-profile-menu.js',
 	],
 	store: new Vuex.Store({
 		state: {
@@ -73,3 +73,9 @@ export default {
 	},
 }
 </script>
+
+<style>
+	.pl-profile {
+		border: 1px solid green;
+	}
+</style>

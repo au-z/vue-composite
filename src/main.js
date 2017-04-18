@@ -9,7 +9,7 @@ import VueComposite from '../lib/vue-composite/vue-composite';
 Vue.use(Vuex);
 Vue.use(VueCustomElement);
 Vue.use(VueComposite, {Vuex, styleSheetId: 'composedCss'});
-Vue.registerApi({name: 'MyAccount', url: 'http://localhost:8081/api/'});
+Vue.registerApi({name: 'MyAccount', url: 'http://localhost:8081/'});
 Vue.config.ignoredElements = ['pl-profile', 'pl-profile-menu'];
 
 new Vue({
@@ -17,5 +17,6 @@ new Vue({
 	render: (h) => h(App),
 });
 
+// required to pack the composables
 import './composables/pl-profile.vue';
 import './composables/pl-profile-menu.vue';
