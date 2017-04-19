@@ -7,9 +7,9 @@
 		</header>
 		<div v-for="(v, i) in viewerCount">
 			<div class="control-panel">
-				<label for="yaw">Yaw</label><input type="number" :value="pvBind('yaw')"></input>
-				<label for="yaw">Pitch</label><input type="number" :value="pvBind('yaw')"></input>
-				<label for="yaw">Roll</label><input type="number" :value="pvBind('yaw')"></input>
+				<label for="yaw">Yaw</label><input type="number" :value="yaw"></input>
+				<label for="yaw">Pitch</label><input type="number" :value="pitch"></input>
+				<label for="yaw">Roll</label><input type="number" :value="roll"></input>
 			</div>
 			<div class="proto-view" :data-src="$api['MyAccount'].url + 'pnpv/'" data-width="500" data-height="200"></div>
 		</div>
@@ -31,11 +31,19 @@ export default {
 		this.$compose(this.$api['MyAccount'].url + 'composables/pl-profile.js');
 		this.tick();
 	},
+	computed: {
+		yaw() { 
+			this.$pvSub('yaw', (type, payload) => payload);
+		},
+		pitch() { 
+			this.$pvSub('pitch', (type, payload) => payload);
+		},
+		roll() {
+			this.$pvSub('roll', (type, payload) => payload);
+		},
+	},
 	mounted() {
-		this.viewers = ProtoView({
-			classSelector: 'proto-view',
-			origin: this.$api['MyAccount'].origin,
-		});
+		this.$pvInit('proto-view', this.$api['MyAccount'].origin);
 	},
 	methods: {
 		tick() {

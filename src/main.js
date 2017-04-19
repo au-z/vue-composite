@@ -5,10 +5,13 @@ import Vuex from 'vuex';
 import App from './App.vue';
 import VueCustomElement from 'vue-custom-element';
 import VueComposite from '../lib/vue-composite/vue-composite';
+import ProtoVue from '../lib/proto-vue/proto-vue';
+import pvService from '../lib/proto-vue/pvService';
 
 Vue.use(Vuex);
 Vue.use(VueCustomElement);
 Vue.use(VueComposite, {Vuex, styleSheetId: 'composedCss'});
+Vue.use(ProtoVue, {pvService});
 Vue.registerApi({name: 'MyAccount', url: 'http://localhost:8081/'});
 Vue.config.ignoredElements = ['pl-profile', 'pl-profile-menu'];
 

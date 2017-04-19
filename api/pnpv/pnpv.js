@@ -11,15 +11,15 @@ var PNPV = (function() {
 			console.warn('[PNPV] message received from unknown origin. Disregarding.');
 			return;
 		}
-		if(!event.data || !event.data.command || !event.data.payload) {
-			console.error('[PNPV] No data or data.command sent with message.');
+		if(!event.data || !event.data.type || !event.data.payload) {
+			console.error('[PNPV] No data or data.type sent with message.');
 		}
-		switch(event.data.command) {
-			case 'yaw': setYaw(event.data.payload); break;
-			case 'pitch': setPitch(event.data.payload); break;
-			case 'roll': setRoll(event.data.payload); break;
+		switch(event.data.type) {
+			case 'updateYaw': updateYaw(event.data.payload); break;
+			case 'updatePitch': updatePitch(event.data.payload); break;
+			case 'updateRoll': updateRoll(event.data.payload); break;
 			default:
-				console.warn('[PNPV] Message command did not match any supported functions. ');
+				console.warn('[PNPV] Message type did not match any supported functions. ');
 				break;
 		}
 	};
@@ -28,15 +28,15 @@ var PNPV = (function() {
 	var yaw = 0.00200;
 	var pitch = 0.00100;
 	var roll = 0.00050;
-	let setYaw = function(val) {
+	let updateYaw = function(val) {
 		yaw = val;
 	};
 
-	let setPitch = function(val) {
+	let updatePitch = function(val) {
 		pitch = val;
 	};
 
-	let setRoll = function(val) {
+	let updateRoll = function(val) {
 		roll = val;
 	};
 
@@ -323,17 +323,18 @@ var PNPV = (function() {
 	/**
 	 * Emits the event from the pnpv mount point
 	 * @param {string} type the custom event type
-	 * @param {Object} payload any object to use as payload
+	 * @param {Object} message any object to use as message
 	 */
-	function emit(type, payload) {
-		var event = new CustomEvent(type, payload);
+	function emit(type, message) {
+		var event = new CustomEvent(type, message);
 		mount.dispatchEvent(event);
+		window.postMessage(message, 'http://localhost:8081');
 		window.parent.document.dispatchEvent(event);
 	}
 
 	return {
-		setYaw: setYaw,
-		setPitch: setPitch,
-		setRoll: setRoll,
+		updateYaw: updateYaw,
+		updatePitch: updatePitch,
+		updateRoll: updateRoll,
 	};
 })();
