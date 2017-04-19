@@ -1,11 +1,14 @@
+/* eslint-env browser */
+/* eslint-disable no-var */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 var eventHub = (function(options) {
-	console.info('[eventHub] starting event hub...');
 	options = options || {};
 	if(!options.targetOrigin) console.error('[eventHub] targetOrigin not provided.');
+	let hubId = null;
 
 	const hub = (function(q) {
 		let events = {};
-		hubId = null;
 		let subUid = -1;
 
 		let subscribe = function(event, func) {
@@ -46,8 +49,7 @@ var eventHub = (function(options) {
 		return {subscribe, publish, unsubscribe};
 	})();
 
-	window.addEventListener('message', receiveMessage);
-	function receiveMessage(event) {
+	window.addEventListener('message', function(event) {
 		var origin = event.origin || event.originalEvent.origin;
 		// TODO: replace with list of known origins
 		if(origin !== options.targetOrigin) {
@@ -62,7 +64,7 @@ var eventHub = (function(options) {
 		} else {
 			hub.publish(event.data._type, event.data.payload);
 		}
-	};
+	});
 
 	/**
 	 * Emits the event from the eventHub mount point
@@ -74,13 +76,13 @@ var eventHub = (function(options) {
 		payload._vid = hubId;
 		window.parent.postMessage({_type: type, payload}, options.targetOrigin);
 	}
-	
+
 	return {
 		subscribe: hub.subscribe,
 		emit: emit,
 		publish: hub.publish,
 		unsubscribe: hub.unsubscribe,
-	}
+	};
 })({
 	targetOrigin: 'http://localhost:8080',
 });

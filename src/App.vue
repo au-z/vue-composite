@@ -23,28 +23,34 @@ export default {
 	data() {
 		return {
 			time: 0,
-			viewerCount: 3,
+			viewerCount: 10,
 			viewers: [],
 			mouseX: null,
 			mouseY: null,
 		};
 	},
-	computed: {
-
-	},
 	created() {
 		this.$compose(this.$api['MyAccount'].url + 'composables/pl-profile.js');
 		this.tick();
-		this.$pvSub('pnpv_mouseUp', (type, payload) => {
+		this.$pv.sub('pnpv_mouseUp', (type, payload) => {
 			this.viewers[payload._vid].mouse = {
 				x: payload.mouseX,
 				y: payload.mouseY,
 			};
 		});
-		this.$pvSub('vidAssigned', (type, payload) => console.log(type, payload));
+		this.$pv.sub('yaw', (type, payload) => {
+			this.viewer[payload._vid].yaw = payload;
+		});
+		this.$pv.sub('pitch', (type, payload) => {
+			this.viewer[payload._vid].pitch = payload;
+		});
+		this.$pv.sub('roll', (type, payload) => {
+			this.viewer[payload._vid].roll = payload;
+		});
 	},
 	mounted() {
-		this.viewers = this.$pvInit('proto-view', this.$api['MyAccount'].origin);
+		this.viewers = this.$pv.init('proto-view', this.$api['MyAccount'].origin);
+		this.viewers.forEach((v) => v.$pv.post('readAll'));
 	},
 	methods: {
 		mouse(vid, xy) {

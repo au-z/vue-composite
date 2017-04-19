@@ -15,7 +15,7 @@ var pnpv = (function(options) {
 	var yaw = 0.00200;
 	var pitch = 0.00100;
 	var roll = 0.00050;
-	
+
 	function registerEvents() {
 		hub.subscribe('updateYaw', function(payload) {
 			yaw = payload;
@@ -26,12 +26,20 @@ var pnpv = (function(options) {
 		hub.subscribe('updateRoll', function(payload) {
 			roll = payload;
 		});
-		hub.subscribe('assignVid', function(vid) {
-			console.log(vid);
-			var canvas = document.getElementsByTagName('canvas')[0];
-			window.__vid = vid;
-			hub.emit('vidAssigned');
+		hub.subscribe('readAll', function(payload) {
+			emitYaw();
+			emitPitch();
+			emitRoll();
 		});
+		function emitYaw() {
+			hub.emit('yaw', {payload: yaw});
+		}
+		function emitPitch() {
+			hub.emit('pitch', {payload: pitch});
+		}
+		function emitRoll() {
+			hub.emit('roll', {payload: roll});
+		}
 	}
 	
 	utilityInit();
