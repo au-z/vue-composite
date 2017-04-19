@@ -1,45 +1,39 @@
 /* eslint-disable no-console*/
 /* eslint-disable no-undef*/
 /* eslint-disable no-var*/
-var PNPV = (function() {
-	'use strict';
+'use strict';
 
-	let receiveMessage = function(event) {
-		var origin = event.origin || event.originalEvent.origin;
-		// TODO: replace with list of known origins
-		if(origin !== 'http://localhost:8080') {
-			console.warn('[PNPV] message received from unknown origin. Disregarding.');
-			return;
-		}
-		if(!event.data || !event.data.type || !event.data.payload) {
-			console.error('[PNPV] No data or data.type sent with message.');
-		}
-		switch(event.data.type) {
-			case 'updateYaw': updateYaw(event.data.payload); break;
-			case 'updatePitch': updatePitch(event.data.payload); break;
-			case 'updateRoll': updateRoll(event.data.payload); break;
-			default:
-				console.warn('[PNPV] Message type did not match any supported functions. ');
-				break;
-		}
-	};
-	window.addEventListener('message', receiveMessage, false);
+var pnpv = (function(options) {
+	options = options || {};
+	const hub = options.eventHub;
+	if(!options.eventHub) {
+		console.error('[pnpv] eventHub option not provided.');
+	} else {
+		registerEvents();
+	}
 
 	var yaw = 0.00200;
 	var pitch = 0.00100;
 	var roll = 0.00050;
-	let updateYaw = function(val) {
-		yaw = val;
-	};
-
-	let updatePitch = function(val) {
-		pitch = val;
-	};
-
-	let updateRoll = function(val) {
-		roll = val;
-	};
-
+	
+	function registerEvents() {
+		hub.subscribe('updateYaw', function(payload) {
+			yaw = payload;
+		});
+		hub.subscribe('updatePitch', function(payload) {
+			pitch = payload;
+		});
+		hub.subscribe('updateRoll', function(payload) {
+			roll = payload;
+		});
+		hub.subscribe('assignVid', function(vid) {
+			console.log(vid);
+			var canvas = document.getElementsByTagName('canvas')[0];
+			window.__vid = vid;
+			hub.emit('vidAssigned');
+		});
+	}
+	
 	utilityInit();
 	var canvas = document.createElement('canvas');
 	canvas.width = Math.min(window.innerWidth, window.innerHeight);
@@ -197,7 +191,7 @@ var PNPV = (function() {
 	};
 	canvas.onmouseup = function(event) {
 			mouseDown = false;
-			emit('pnpv_mouseUp', {mouseX: lastMouseX, mouseY: lastMouseY});
+			hub.emit('pnpv_mouseUp', {mouseX: lastMouseX, mouseY: lastMouseY});
 	};
 	canvas.onmousemove = function(event) {
 		var newX = event.clientX;
@@ -319,22 +313,4 @@ var PNPV = (function() {
 			xhr.send();
 		};
 	}
-
-	/**
-	 * Emits the event from the pnpv mount point
-	 * @param {string} type the custom event type
-	 * @param {Object} message any object to use as message
-	 */
-	function emit(type, message) {
-		var event = new CustomEvent(type, message);
-		mount.dispatchEvent(event);
-		window.postMessage(message, 'http://localhost:8081');
-		window.parent.document.dispatchEvent(event);
-	}
-
-	return {
-		updateYaw: updateYaw,
-		updatePitch: updatePitch,
-		updateRoll: updateRoll,
-	};
-})();
+})({eventHub: eventHub});

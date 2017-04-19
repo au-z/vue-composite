@@ -7,13 +7,13 @@
 		</header>
 		<div v-for="(v, i) in viewerCount">
 			<div class="control-panel">
-				<label for="yaw">Yaw</label><input type="number" :value="yaw"></input>
-				<label for="yaw">Pitch</label><input type="number" :value="pitch"></input>
-				<label for="yaw">Roll</label><input type="number" :value="roll"></input>
+				<label for="yaw">Yaw</label><input type="number"></input>
+				<label for="yaw">Pitch</label><input type="number"></input>
+				<label for="yaw">Roll</label><input type="number"></input>
+				Mouse: ({{mouse(i, 'x')}}, {{mouse(i, 'y')}})
 			</div>
-			<div class="proto-view" :data-src="$api['MyAccount'].url + 'pnpv/'" data-width="500" data-height="200"></div>
+			<div :id="'viewer_' + i" class="proto-view" :data-src="$api['MyAccount'].url + 'pnpv/'" data-width="500" data-height="200" :data-vid="i"></div>
 		</div>
-
 	</div>
 </template>
 
@@ -24,28 +24,34 @@ export default {
 		return {
 			time: 0,
 			viewerCount: 3,
-			viewers: null,
+			viewers: [],
+			mouseX: null,
+			mouseY: null,
 		};
+	},
+	computed: {
+
 	},
 	created() {
 		this.$compose(this.$api['MyAccount'].url + 'composables/pl-profile.js');
 		this.tick();
-	},
-	computed: {
-		yaw() { 
-			this.$pvSub('yaw', (type, payload) => payload);
-		},
-		pitch() { 
-			this.$pvSub('pitch', (type, payload) => payload);
-		},
-		roll() {
-			this.$pvSub('roll', (type, payload) => payload);
-		},
+		this.$pvSub('pnpv_mouseUp', (type, payload) => {
+			this.viewers[payload._vid].mouse = {
+				x: payload.mouseX,
+				y: payload.mouseY,
+			};
+		});
+		this.$pvSub('vidAssigned', (type, payload) => console.log(type, payload));
 	},
 	mounted() {
-		this.$pvInit('proto-view', this.$api['MyAccount'].origin);
+		this.viewers = this.$pvInit('proto-view', this.$api['MyAccount'].origin);
 	},
 	methods: {
+		mouse(vid, xy) {
+			if(!this.viewers) return;
+			let viewer = this.viewers[vid];
+			return (viewer && viewer.mouse) ? viewer.mouse[xy] : '';
+		},
 		tick() {
 			let vm = this;
 			setInterval(() => {

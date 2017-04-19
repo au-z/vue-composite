@@ -6,7 +6,7 @@ module.exports = {
 	},
 	// required to lint *.vue files
 	plugins: [
-		'html'
+		'html',
 	],
 	'extends': ['eslint:recommended', 'auz'],
 	// add your custom rules here
@@ -15,6 +15,5 @@ module.exports = {
 		'linebreak-style': ['error', 'windows'],
 		'max-len': ['warn', 120],
 		'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-		'curly': ['error'],
 	}
 };

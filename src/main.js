@@ -11,7 +11,11 @@ import pvService from '../lib/proto-vue/pvService';
 Vue.use(Vuex);
 Vue.use(VueCustomElement);
 Vue.use(VueComposite, {Vuex, styleSheetId: 'composedCss'});
-Vue.use(ProtoVue, {pvService});
+Vue.use(ProtoVue, {
+	pvService: pvService,
+	classSelector: 'proto-view',
+	targetOrigin: 'http://localhost:8081',
+});
 Vue.registerApi({name: 'MyAccount', url: 'http://localhost:8081/'});
 Vue.config.ignoredElements = ['pl-profile', 'pl-profile-menu'];
 
