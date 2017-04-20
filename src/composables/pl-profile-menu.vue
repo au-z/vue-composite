@@ -33,20 +33,17 @@
 </script>
 
 <style>
-	.pl-profile-menu {
-		border: 1px solid blue;
-	}
-	.pl-profile-menu ul {
+	.pl-profile-menu > ul {
 		list-style-type: none;
 	}
-	.pl-profile-menu ul li {
+	.pl-profile-menu > ul > li {
 		display: block;
 		margin: 0;
 		padding: 8px;
 		border-bottom: 1px solid #eee;
 	}
 	.pl-profile-menu a {
-		color: #55bbff;
+		color: #555;
 		text-decoration: none;
 	}
 </style>

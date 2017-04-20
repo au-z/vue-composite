@@ -1,30 +1,31 @@
 <template>
 	<div id="app">
-		<h1>{{$options.name}}</h1>
-		{{time}}
 		<header>
 			<pl-profile :prop="time" @emitEvent="addCounter(-1)"></pl-profile>
 		</header>
-		<div v-for="(v, i) in viewerCount">
-			<div class="control-panel">
-				<label for="yaw">Yaw</label><input type="number"></input>
-				<label for="yaw">Pitch</label><input type="number"></input>
-				<label for="yaw">Roll</label><input type="number"></input>
-				Mouse: ({{mouse(i, 'x')}}, {{mouse(i, 'y')}})
-			</div>
-			<div :id="'viewer_' + i" class="proto-view" :data-src="$api['MyAccount'].url + 'pnpv/'" data-width="500" data-height="200" :data-vid="i"></div>
+		<div class="stats-for-nerds">
+			<div>Shared Counter: {{time}}</div>
 		</div>
+		<br><br><br><br>
+		<div class="pv-container" v-for="(v, i) in viewers">
+			<pl-viewer-control :viewer="v">{{v}}</pl-viewer-control>
+			<div :id="'viewer_' + i" class="proto-view" :data-src="$api['MyAccount'].url + 'pnpv/'" data-width="700" data-height="400" :data-vid="i"></div>
+		</div>
+		<button @click="newViewer()">New</button>
 	</div>
 </template>
 
 <script>
+import PlViewerControl from './pl-viewer-control.vue';
 export default {
 	name: 'app',
+	components: {
+		'pl-viewer-control': PlViewerControl,
+	},
 	data() {
 		return {
 			time: 0,
-			viewerCount: 10,
-			viewers: [],
+			viewers: [{}],
 			mouseX: null,
 			mouseY: null,
 		};
@@ -32,27 +33,22 @@ export default {
 	created() {
 		this.$compose(this.$api['MyAccount'].url + 'composables/pl-profile.js');
 		this.tick();
-		this.$pv.sub('pnpv_mouseUp', (type, payload) => {
-			this.viewers[payload._vid].mouse = {
-				x: payload.mouseX,
-				y: payload.mouseY,
-			};
-		});
-		this.$pv.sub('yaw', (type, payload) => {
-			this.viewer[payload._vid].yaw = payload;
-		});
-		this.$pv.sub('pitch', (type, payload) => {
-			this.viewer[payload._vid].pitch = payload;
-		});
-		this.$pv.sub('roll', (type, payload) => {
-			this.viewer[payload._vid].roll = payload;
-		});
 	},
 	mounted() {
-		this.viewers = this.$pv.init('proto-view', this.$api['MyAccount'].origin);
-		this.viewers.forEach((v) => v.$pv.post('readAll'));
+		this.initViewers();
 	},
 	methods: {
+		newViewer() {
+			this.viewers.push({});
+			this.$nextTick(() => this.initViewers());
+		},
+		initViewers() {
+			this.$pv.init('proto-view', this.$api['MyAccount'].origin).then((viewers) => {
+				this.viewers = viewers;
+				this.subscribe();
+				this.viewers.forEach((v) => v.post('requestRotations'));
+			});
+		},
 		mouse(vid, xy) {
 			if(!this.viewers) return;
 			let viewer = this.viewers[vid];
@@ -70,15 +66,32 @@ export default {
 		pnpvBind(messageKey) {
 			return '1';
 		},
+		subscribe() {
+			this.$pv.sub('pnpv_mouseUp', (type, payload) => {
+				this.viewers[payload._vid].mouse = {
+					x: payload.mouseX,
+					y: payload.mouseY,
+				};
+			});
+			this.$pv.sub('yaw', (type, data) => this.viewers[data._vid].yaw = data.payload);
+			this.$pv.sub('pitch', (type, data) => this.viewers[data._vid].pitch = data.payload);
+			this.$pv.sub('roll', (type, data) => this.viewers[data._vid].roll = data.payload);
+		}
 	},
 };
 </script>
 
 <style lang="scss">
 [v-cloak] { display: none }
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+body {
+	background-color: #f8f8f8;
+}
 
 #app {
-	font-family: 'Avenir', Helvetica, Arial, sans-serif;
+	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
@@ -113,6 +126,35 @@ a {
 	color: #42b983;
 }
 
+button {
+	background-color: transparent;
+	padding: 8px 12px;
+	border-radius: 2px;
+	background-color: #4488ff;
+	color: white;
+	font-size: 1em;
+	border: none;
+	transition: 0.3s all;
+	&:hover {
+		cursor: pointer;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+	}
+}
+
+.stats-for-nerds{
+	position: absolute;
+	left: 0;
+	top: 42px;
+	min-width: 300px;
+	height: 400px;
+	background-color: rgba(40,40,40,0.8);
+	border-bottom-right-radius: 4px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	z-index: 1;
+	color: #eee;
+	border-bottom: 4px solid #eee;
+}
+
 .pl-profile {
 	position: absolute;
 	right: 0;
@@ -123,9 +165,15 @@ a {
 	}
 }
 
-.control-panel {
-	input {
-		width: 50px;
-	}
+.pv-container {
+	position: relative;
+	display: flex;
+	width: 50%;
+	min-width: 700px;
+	margin: 16px auto;
+	justify-content: center;
+	border-radius: 2px;
+	background-color: white;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 </style>

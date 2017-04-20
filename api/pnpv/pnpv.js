@@ -17,31 +17,22 @@ var pnpv = (function(options) {
 	var roll = 0.00050;
 
 	function registerEvents() {
-		hub.subscribe('updateYaw', function(payload) {
+		hub.subscribe('updateYaw', function(type, payload) {
 			yaw = payload;
 		});
-		hub.subscribe('updatePitch', function(payload) {
+		hub.subscribe('updatePitch', function(type, payload) {
 			pitch = payload;
 		});
-		hub.subscribe('updateRoll', function(payload) {
+		hub.subscribe('updateRoll', function(type, payload) {
 			roll = payload;
 		});
-		hub.subscribe('readAll', function(payload) {
-			emitYaw();
-			emitPitch();
-			emitRoll();
-		});
-		function emitYaw() {
+		hub.subscribe('requestRotations', function(type, payload) {
 			hub.emit('yaw', {payload: yaw});
-		}
-		function emitPitch() {
 			hub.emit('pitch', {payload: pitch});
-		}
-		function emitRoll() {
 			hub.emit('roll', {payload: roll});
-		}
+		});
 	}
-	
+
 	utilityInit();
 	var canvas = document.createElement('canvas');
 	canvas.width = Math.min(window.innerWidth, window.innerHeight);

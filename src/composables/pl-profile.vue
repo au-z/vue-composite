@@ -1,12 +1,12 @@
 <template>
 	<div class="pl-profile">
-		<div class="header"><h3>Greetings {{name}}!</h3></div>
-		<div class="content">
+		<div class="header" @click="toggleMenu" title="click to toggle"><h4>Greetings {{name}}!</h4></div>
+		<div class="content" :class="menuActive ? '' : 'transparent'">
 			<button @click="$emit('emitEvent')">-1</button>
 			<p>prop: {{prop}} : vuex: {{counter}}</p>
 			<p>apiUrl: {{apiUrl}}</p>
+			<pl-profile-menu></pl-profile-menu>
 		</div>
-		<pl-profile-menu></pl-profile-menu>
 	</div>
 </template>
 
@@ -53,6 +53,7 @@ export default {
 	data: function(){
 		return {
 			name: null,
+			menuActive: false,
 		};
 	},
 	computed: mapGetters(['counter', 'apiUrl']),
@@ -60,6 +61,9 @@ export default {
 		this.getProfile();
 	},
 	methods: {
+		toggleMenu() {
+			this.menuActive = !this.menuActive;
+		},
 		getProfile: function() {
 			let vm = this;
 			fetch(this.apiUrl + 'account/profile')
@@ -76,6 +80,27 @@ export default {
 
 <style>
 	.pl-profile {
-		border: 1px solid green;
+		padding: 0 0 8px 8px;
+	}
+	.pl-profile > .header {
+		height: 36px;
+		color: #555;
+		border-bottom: 2px solid #4488ff;
+	}
+	.pl-profile > .header:hover {
+		cursor: pointer;
+	}
+	.pl-profile > .header > h4 {
+		margin: 8px 0 4px 0;
+		font-size: 1.1em;
+		font-weight: 300;
+	}
+	.pl-profile > .content {
+		padding: 16px;
+		opacity: 1.0;
+		transition: 0.3s all;
+	}
+	.pl-profile > .content.transparent {
+		opacity: 0.0
 	}
 </style>
