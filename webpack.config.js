@@ -29,7 +29,7 @@ module.exports = {
 					{
 						loader: 'vue-composite-loader',
 						options: {
-							path: path.resolve(__dirname, 'api/composables'),
+							path: path.resolve(__dirname, 'src/composables'),
 						},
 					},
 				],
